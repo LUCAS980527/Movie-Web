@@ -8,7 +8,7 @@ import Footer from "./_features/Footer";
 
 export default function Home() {
   return (
-    <div>
+    <div className="w-[100vh h-[100vh">
       <Header />
       <HeroSection />
       <UpcomingMovie />
