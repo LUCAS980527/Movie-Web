@@ -1,5 +1,5 @@
-import PlayIcon from "@/_Icons/PlayIcon";
-import StarIcon from "@/_Icons/StarIcon";
+// import PlayIcon from "@/_Icons/Play Icon";
+// import StarIcon from "@/_Icons/StarIcon";
 import {
   Carousel,
   CarouselContent,
