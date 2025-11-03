@@ -1,14 +1,10 @@
 "use client";
 
-import ArrowIcon from "@/_Icons/ArrowIcon";
 import { MovieCards } from "../../_components/Movie-Cards";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
-import Header from "@/app/_features/Home/Header";
-import Footer from "@/app/_features/Footer";
 import { Button } from "@/components/ui/button";
-import LeftArrowIcon from "@/_Icons/LeftArrowIcon";
 import {
   Pagination,
   PaginationContent,
@@ -30,11 +26,11 @@ const titles = {
 const Page = () => {
   const [page, setPage] = useState(1);
   const { type } = useParams();
-  // const param = useParams();
 
   const [MovieData, setMovieData] = useState([]);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const [totalPages, setTotalPages] = useState(1);
 
   const getUpcomingMovieData = async () => {
     setLoading(true);
@@ -49,18 +45,25 @@ const Page = () => {
     const data = await response.json();
     setMovieData(data.results);
     setLoading(false);
+    setTotalPages(data.total_pages);
   };
   useEffect(() => {
     getUpcomingMovieData();
-  }, []);
+  }, [page, type]);
 
   const handleSeeMoreButton = () => {
     router.push(`/movies/${type}`);
-    const handleChangePage = () => {
-      setPage();
-    };
+  };
+  const handleChangePage = () => {
+    setPage();
   };
   console.log("MovieData", MovieData);
+  const handlePreviousPage = () => {
+    if (page < totalPages) setPage((page) => page - 1);
+  };
+  const handleNextPage = () => {
+    if (page < totalPages) setPage((page) => page + 1);
+  };
 
   return (
     <div className="flex items-center justify-center w-[1437px] h-[978px] flex-col mt-[53px] gap-[32px]">
@@ -68,17 +71,17 @@ const Page = () => {
         <div className="font-inter font-semibold text-[24px] leading-[32px] tracking-[-0.025em]">
           {titles[type]}
         </div>
-        <div className="flex w-[120px] h-[36px] items-center justify-center">
+        {/* <div className="flex w-[120px] h-[36px] items-center justify-center ">
           <button
-            className="font-inter font-medium text-[14px] leading-[20px] tracking-[0]"
+            className="font-inter font-medium text-[14px] leading-[20px] tracking-[0] cursor-pointer"
             onClick={handleSeeMoreButton}
           >
             See more
           </button>
           <div>
-            <ArrowIcon />
+            <ArrowIcon /> 
           </div>
-        </div>
+        </div> */}
       </div>
       <div className=" gap-8 grid grid-cols-5  w-[1437px] h-[978px] px-[80px] box-border">
         {MovieData.slice(0, 10).map((movie, index) => {
@@ -92,20 +95,50 @@ const Page = () => {
           );
         })}
       </div>
-      <div>
+      <div className="flex w-full justify-center mt-8">
         <Pagination>
           <PaginationContent>
             <PaginationItem>
-              <PaginationPrevious href="#" />
+              <PaginationPrevious
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePreviousPage();
+                }}
+              />
             </PaginationItem>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .slice(Math.max(page - 2, 0), Math.min(page + 3, totalPages))
+              .map((num) => (
+                <PaginationItem key={num}>
+                  <PaginationLink
+                    href="#"
+                    isActive={page === num}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setPage(num);
+                    }}
+                  >
+                    {num}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+
+            {page < totalPages - 2 && (
+              <PaginationItem>
+                <PaginationEllipsis />
+              </PaginationItem>
+            )}
+
             <PaginationItem>
-              <PaginationLink href="#">1</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext href="#" />
+              <PaginationNext
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNextPage();
+                }}
+              />
             </PaginationItem>
           </PaginationContent>
         </Pagination>

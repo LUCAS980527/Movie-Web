@@ -3,7 +3,7 @@ import OneStarIcon from "@/_Icons/OneStarIcon";
 export function MovieCards({ rating, title, imageUrl }) {
   const image = "https://image.tmdb.org/t/p/${imageUrl}";
   return (
-    <div className="w-[229.73px] h-[439px] rounded-sm  bg-secondary">
+    <div className="w-[229.73px] h-[439px] rounded-sm  bg-secondary cursor-pointer">
       <div
         className="w-[229.73px] h-[340px] bg-cover bg-center rounded-sm"
         style={{ backgroundImage: `url(${imageUrl})` }}

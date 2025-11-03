@@ -55,7 +55,7 @@ export const MovieList = (props) => {
         </div>
         <div className="flex w-[120px] h-[36px] items-center justify-center">
           <button
-            className="font-inter font-medium text-[14px] leading-[20px] tracking-[0]"
+            className="font-inter font-medium text-[14px] leading-[20px] tracking-[0] cursor-pointer"
             onClick={handleSeeMoreButton}
           >
             See more
