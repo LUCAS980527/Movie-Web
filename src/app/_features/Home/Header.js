@@ -5,7 +5,9 @@ import Searchicon from "@/_Icons/SearchIcon";
 export default function Header() {
   return (
     <div className="flex w-[1440px] h-[59px] items-center justify-around">
-      <FilmIcon />
+      <button style={{ cursor: "pointer" }}>
+        <FilmIcon />
+      </button>
       <div className="flex gap-[12px]">
         <button className="flex h-[36px] w-[97px] border rounded-md items-center justify-center gap-[8px] border-gray-200">
           <DownIcon />

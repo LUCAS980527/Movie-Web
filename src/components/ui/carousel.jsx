@@ -120,7 +120,7 @@ function CarouselContent({ className, ...props }) {
       <div
         className={cn(
           "flex",
-          orientation === "horizontal" ? "-ml-4" : "-mt-4 flex-col",
+          orientation === "horizontal" ? "-ml-4" : " flex-col",
           className
         )}
         {...props}
@@ -167,6 +167,7 @@ function CarouselPrevious({
           : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
         className
       )}
+      style={{ cursor: "pointer" }}
       disabled={!canScrollPrev}
       onClick={scrollPrev}
       {...props}
@@ -197,6 +198,7 @@ function CarouselNext({
           : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",
         className
       )}
+      style={{ cursor: "pointer" }}
       disabled={!canScrollNext}
       onClick={scrollNext}
       {...props}
