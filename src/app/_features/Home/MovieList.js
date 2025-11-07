@@ -70,6 +70,7 @@ export const MovieList = (props) => {
           return (
             <MovieCards
               key={index}
+              id={movie.id}
               title={movie.title}
               imageUrl={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
               rating={movie.vote_average}

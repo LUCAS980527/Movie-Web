@@ -27,7 +27,7 @@ const Page = () => {
   const [page, setPage] = useState(1);
   const { type } = useParams();
 
-  const [MovieData, setMovieData] = useState([]);
+  const [movieData, setMovieData] = useState([]);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const [totalPages, setTotalPages] = useState(1);
@@ -57,7 +57,7 @@ const Page = () => {
   const handleChangePage = () => {
     setPage();
   };
-  console.log("MovieData", MovieData);
+  console.log("MovieData", movieData);
   const handlePreviousPage = () => {
     if (page < totalPages) setPage((page) => page - 1);
   };
@@ -84,10 +84,11 @@ const Page = () => {
         </div> */}
       </div>
       <div className=" gap-8 grid grid-cols-5  w-[1437px] h-[978px] px-[80px] box-border">
-        {MovieData.slice(0, 10).map((movie, index) => {
+        {movieData.slice(0, 10).map((movie, index) => {
           return (
             <MovieCards
               key={index}
+              id={movie.id}
               title={movie.title}
               imageUrl={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
               rating={movie.vote_average}
