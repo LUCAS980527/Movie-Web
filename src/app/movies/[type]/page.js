@@ -43,7 +43,7 @@ const Page = () => {
       },
     });
     const data = await response.json();
-    setMovieData(data.results);
+    setMovieData(data.results || []);
     setLoading(false);
     setTotalPages(data.total_pages);
   };
@@ -71,30 +71,23 @@ const Page = () => {
         <div className="font-inter font-semibold text-[24px] leading-[32px] tracking-[-0.025em]">
           {titles[type]}
         </div>
-        {/* <div className="flex w-[120px] h-[36px] items-center justify-center ">
-          <button
-            className="font-inter font-medium text-[14px] leading-[20px] tracking-[0] cursor-pointer"
-            onClick={handleSeeMoreButton}
-          >
-            See more
-          </button>
-          <div>
-            <ArrowIcon /> 
-          </div>
-        </div> */}
       </div>
       <div className=" gap-8 grid grid-cols-5  w-[1437px] h-[978px] px-[80px] box-border">
-        {movieData.slice(0, 10).map((movie, index) => {
-          return (
-            <MovieCards
-              key={index}
-              id={movie.id}
-              title={movie.title}
-              imageUrl={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-              rating={movie.vote_average}
-            />
-          );
-        })}
+        {loading ? (
+          <p>Loading...</p>
+        ) : (
+          movieData.slice(0, 10).map((movie, index) => {
+            return (
+              <MovieCards
+                key={index}
+                id={movie.id}
+                title={movie.title}
+                imageUrl={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                rating={movie.vote_average}
+              />
+            );
+          })
+        )}
       </div>
       <div className="flex w-full justify-center mt-8">
         <Pagination>

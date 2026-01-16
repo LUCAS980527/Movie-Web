@@ -148,14 +148,7 @@ export default function HeroSection() {
           )}
 
           <DialogFooter>
-            <DialogClose asChild>
-              <Button
-                variant="outline"
-                onClick={() => setSelectedMovieId(null)}
-              >
-                Close
-              </Button>
-            </DialogClose>
+            <DialogClose asChild></DialogClose>
           </DialogFooter>
         </DialogContent>
       </Dialog>

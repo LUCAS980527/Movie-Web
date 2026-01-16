@@ -8,7 +8,7 @@ export function MovieCards({ rating, title, imageUrl, id }) {
   const image = `https://image.tmdb.org/t/p/w500${imageUrl}`;
 
   const handleMovieClick = () => {
-    router.push(`/movies/${id}`);
+    router.push(`/movie/${id}`);
   };
 
   return (
