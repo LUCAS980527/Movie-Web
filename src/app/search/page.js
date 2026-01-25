@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -24,7 +26,7 @@ export default function SearchPage() {
           `${BASE_URL}/search/movie?query=${query}&language=en-US`,
           {
             headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
-          }
+          },
         );
         const data = await res.json();
         setMovies(data.results || []);
