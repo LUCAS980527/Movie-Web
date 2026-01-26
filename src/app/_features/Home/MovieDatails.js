@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import OneStarIcon from "@/_Icons/OneStarIcon";
 import Image from "next/image";
+import Link from "next/link";
 
 const BASE_URL = "https://api.themoviedb.org/3";
 const ACCESS_TOKEN =
@@ -86,8 +87,8 @@ export default function MovieDetailPage() {
         <Image
           src={`https://image.tmdb.org/t/p/w300${movie.poster_path}`}
           alt={movie.title || "Movie poster"}
-          width={300}
-          height={450}
+          width={550}
+          height={350}
           className="rounded-lg"
         />
 
@@ -169,9 +170,17 @@ export default function MovieDetailPage() {
 
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             {similar.slice(0, showAllSimilar ? 20 : 5).map((m) => (
-              <div key={m.id} className="space-y-2">
+              <Link
+                key={m.id}
+                href={`/movie/${m.id}`} // ✅ ЯГ ЗӨВ ROUTE
+                className="space-y-2 block hover:opacity-90 cursor-pointer"
+              >
                 <Image
-                  src={`https://image.tmdb.org/t/p/w300${m.poster_path}`}
+                  src={
+                    m.poster_path
+                      ? `https://image.tmdb.org/t/p/w300${m.poster_path}`
+                      : "/placeholder.png"
+                  }
                   alt={m.title || "Movie poster"}
                   width={300}
                   height={450}
@@ -179,11 +188,12 @@ export default function MovieDetailPage() {
                 />
 
                 <h3 className="text-sm font-semibold">{m.title}</h3>
+
                 <div className="flex items-center gap-1 text-xs">
                   <OneStarIcon />
-                  {m.vote_average.toFixed(1)}
+                  {m.vote_average?.toFixed(1)}
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
