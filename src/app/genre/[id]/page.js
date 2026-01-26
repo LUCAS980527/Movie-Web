@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import Image from "next/image";
 
 const BASE_URL = "https://api.themoviedb.org/3";
 const ACCESS_TOKEN =
@@ -68,10 +69,14 @@ export default function GenreFilterPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {movies.map((m) => (
               <div key={m.id} className="space-y-2">
-                <img
+                <Image
                   src={`https://image.tmdb.org/t/p/w300${m.poster_path}`}
+                  alt={m.title || "Movie poster"}
+                  width={300}
+                  height={450}
                   className="rounded-lg"
                 />
+
                 <p className="text-sm font-medium">{m.title}</p>
               </div>
             ))}

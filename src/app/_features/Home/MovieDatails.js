@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import OneStarIcon from "@/_Icons/OneStarIcon";
+import Image from "next/image";
 
 const BASE_URL = "https://api.themoviedb.org/3";
 const ACCESS_TOKEN =
@@ -82,9 +83,12 @@ export default function MovieDetailPage() {
   return (
     <div className="max-w-6xl mx-auto px-6 py-8">
       <div className="grid md:grid-cols-2 gap-6 items-start">
-        <img
-          src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-          className="rounded-xl shadow-lg"
+        <Image
+          src={`https://image.tmdb.org/t/p/w300${movie.poster_path}`}
+          alt={movie.title || "Movie poster"}
+          width={300}
+          height={450}
+          className="rounded-lg"
         />
 
         <div>
@@ -166,10 +170,14 @@ export default function MovieDetailPage() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             {similar.slice(0, showAllSimilar ? 20 : 5).map((m) => (
               <div key={m.id} className="space-y-2">
-                <img
+                <Image
                   src={`https://image.tmdb.org/t/p/w300${m.poster_path}`}
+                  alt={m.title || "Movie poster"}
+                  width={300}
+                  height={450}
                   className="rounded-lg"
                 />
+
                 <h3 className="text-sm font-semibold">{m.title}</h3>
                 <div className="flex items-center gap-1 text-xs">
                   <OneStarIcon />

@@ -49,11 +49,12 @@ const Page = () => {
   };
   useEffect(() => {
     getUpcomingMovieData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, type]);
 
-  const handleSeeMoreButton = () => {
+  function handleSeeMoreButton() {
     router.push(`/movies/${type}`);
-  };
+  }
   const handleChangePage = () => {
     setPage();
   };
