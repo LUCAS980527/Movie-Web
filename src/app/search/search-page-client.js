@@ -1,17 +1,15 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
+import OneStarIcon from "@/_Icons/OneStarIcon";
+import ArrowIcon from "@/_Icons/ArrowIcon";
+import LeftArrowIcon from "@/_Icons/LeftArrowIcon";
 
 const BASE_URL = "https://api.themoviedb.org/3";
-const ACCESS_TOKEN = "PUT_YOUR_TOKEN_HERE";
-
-function getYear(date) {
-  if (!date) return null;
-  const y = Number(String(date).slice(0, 4));
-  return Number.isFinite(y) ? y : null;
-}
+const ACCESS_TOKEN =
+  "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxMjI5ZmNiMGRmZTNkMzc2MWFmOWM0YjFjYmEyZTg1NiIsIm5iZiI6MTc1OTcxMTIyNy43OTAwMDAyLCJzdWIiOiI2OGUzMGZmYjFlN2Y3MjAxYjI5Y2FiYmIiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.M0DQ3rCdsWnMw8U-8g5yGXx-Ga00Jp3p11eRyiSxCuY";
 
 function clamp(n, min, max) {
   return Math.max(min, Math.min(max, n));
@@ -32,13 +30,6 @@ export default function SearchPageClient() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Filters
-  const [selectedGenreIds, setSelectedGenreIds] = useState([]);
-  const [yearFrom, setYearFrom] = useState("");
-  const [yearTo, setYearTo] = useState("");
-  const [minRating, setMinRating] = useState("");
-
-  // Genres list fetch
   useEffect(() => {
     let cancelled = false;
 
@@ -60,7 +51,6 @@ export default function SearchPageClient() {
     };
   }, []);
 
-  // Search fetch (page-тэй)
   useEffect(() => {
     let cancelled = false;
 
@@ -107,33 +97,6 @@ export default function SearchPageClient() {
     };
   }, [query, page]);
 
-  // Client-side filter (current page results дээр)
-  const filteredMovies = useMemo(() => {
-    const yf = yearFrom ? Number(yearFrom) : null;
-    const yt = yearTo ? Number(yearTo) : null;
-    const mr = minRating ? Number(minRating) : null;
-
-    return movies.filter((m) => {
-      // genre
-      if (selectedGenreIds.length > 0) {
-        const ids = m.genre_ids || [];
-        const hasAny = selectedGenreIds.some((g) => ids.includes(g));
-        if (!hasAny) return false;
-      }
-
-      // year
-      const y = getYear(m.release_date);
-      if (yf && (!y || y < yf)) return false;
-      if (yt && (!y || y > yt)) return false;
-
-      // rating
-      const va = typeof m.vote_average === "number" ? m.vote_average : 0;
-      if (mr && va < mr) return false;
-
-      return true;
-    });
-  }, [movies, selectedGenreIds, yearFrom, yearTo, minRating]);
-
   function goToPage(p) {
     const next = clamp(p, 1, totalPages);
     const sp = new URLSearchParams(searchParams.toString());
@@ -141,189 +104,122 @@ export default function SearchPageClient() {
     router.push(`/search?${sp.toString()}`);
   }
 
-  function toggleGenre(id) {
-    setSelectedGenreIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
-    );
+  function handleMovieClick(id) {
+    router.push(`/movie/${id}`);
   }
 
-  function clearFilters() {
-    setSelectedGenreIds([]);
-    setYearFrom("");
-    setYearTo("");
-    setMinRating("");
+  function handleGenreClick(id) {
+    router.push(`/genre/${id}`);
   }
 
   if (loading) return <p className="p-6">Loading...</p>;
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <div className="flex items-start justify-between gap-8">
-        {/* LEFT: RESULTS */}
-        <div className="flex-1 min-w-0">
-          <h1 className="text-xl font-semibold mb-2">
-            Search results for: <span className="font-bold">{query}</span>
-          </h1>
+    <div className="mx-auto w-full max-w-[1320px] px-6 py-10">
+      <h1 className="text-5xl font-semibold leading-tight">Search results</h1>
+      {query.trim() ? (
+        <p className="mt-8 text-4xl font-semibold tracking-tight">
+          {movies.length} results for &ldquo;{query}&rdquo;
+        </p>
+      ) : (
+        <p className="mt-8 text-lg text-zinc-500">
+          Search input empty байна. Дээрх хайлтаар утга оруулна уу.
+        </p>
+      )}
 
-          {error && <p className="text-red-600 mb-4">{error}</p>}
-
-          {!error && filteredMovies.length === 0 && (
-            <p className="mt-6">No results found.</p>
+      <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-[1fr_360px]">
+        <section className="lg:border-r lg:border-zinc-200 lg:pr-10">
+          {error && <p className="mb-4 text-red-600">{error}</p>}
+          {!error && query.trim() && movies.length === 0 && (
+            <p className="mt-2 text-zinc-500">No results found.</p>
           )}
 
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-4">
-            {filteredMovies.map((m) => {
-              const hasPoster = Boolean(m.poster_path);
+          <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 xl:grid-cols-4">
+            {movies.map((movie) => {
+              const hasPoster = Boolean(movie.poster_path);
               const posterUrl = hasPoster
-                ? `https://image.tmdb.org/t/p/w300${m.poster_path}`
+                ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
                 : "";
+              const rating =
+                typeof movie.vote_average === "number"
+                  ? movie.vote_average.toFixed(1)
+                  : "0.0";
 
               return (
-                <div key={m.id} className="space-y-2">
-                  <div className="relative w-full aspect-[2/3] rounded-lg overflow-hidden bg-gray-100">
+                <button
+                  key={movie.id}
+                  onClick={() => handleMovieClick(movie.id)}
+                  className="overflow-hidden rounded-xl bg-zinc-100 text-left transition-all hover:-translate-y-1 hover:shadow-md"
+                >
+                  <div className="relative h-[320px] w-full bg-zinc-200">
                     {hasPoster ? (
                       <Image
                         src={posterUrl}
-                        alt={m.title || "Movie poster"}
+                        alt={movie.title || "Movie poster"}
                         fill
                         className="object-cover"
                         sizes="(max-width: 768px) 50vw, 20vw"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-xs text-gray-500">
+                      <div className="flex h-full items-center justify-center text-sm text-zinc-500">
                         No poster
                       </div>
                     )}
                   </div>
-
-                  <p className="text-sm font-medium line-clamp-2">
-                    {m.title || "Untitled"}
-                  </p>
-
-                  <p className="text-xs text-gray-500">
-                    {m.release_date ? String(m.release_date).slice(0, 4) : "—"}{" "}
-                    •{" "}
-                    {typeof m.vote_average === "number"
-                      ? m.vote_average.toFixed(1)
-                      : "—"}
-                  </p>
-                </div>
+                  <div className="space-y-2 px-3 py-3">
+                    <div className="flex items-center gap-1 text-base">
+                      <OneStarIcon />
+                      <span className="font-medium">{rating}</span>
+                      <span className="text-zinc-500">/10</span>
+                    </div>
+                    <p className="line-clamp-2 text-3xl font-normal tracking-tight">
+                      {movie.title || "Untitled"}
+                    </p>
+                  </div>
+                </button>
               );
             })}
           </div>
 
-          {/* PAGINATION */}
           {query.trim() && totalPages > 1 && (
-            <div className="flex items-center gap-2 mt-8">
+            <div className="mt-10 flex items-center justify-center gap-5 text-zinc-500">
               <button
                 onClick={() => goToPage(page - 1)}
                 disabled={page <= 1}
-                className="px-3 py-2 rounded border disabled:opacity-50"
+                className="flex items-center gap-1 disabled:opacity-40"
               >
-                Prev
+                <LeftArrowIcon />
+                Previous
               </button>
-
-              {Array.from({ length: 5 }).map((_, i) => {
-                const start = clamp(page - 2, 1, Math.max(1, totalPages - 4));
-                const p = start + i;
-                if (p > totalPages) return null;
-
-                return (
-                  <button
-                    key={p}
-                    onClick={() => goToPage(p)}
-                    className={`px-3 py-2 rounded border ${
-                      p === page ? "bg-black text-white" : ""
-                    }`}
-                  >
-                    {p}
-                  </button>
-                );
-              })}
-
+              <button className="h-10 w-10 rounded-md border border-zinc-300 text-zinc-900">
+                {page}
+              </button>
               <button
                 onClick={() => goToPage(page + 1)}
                 disabled={page >= totalPages}
-                className="px-3 py-2 rounded border disabled:opacity-50"
+                className="flex items-center gap-1 disabled:opacity-40"
               >
                 Next
+                <ArrowIcon />
               </button>
-
-              <span className="text-sm text-gray-500 ml-2">
-                Page {page} / {totalPages}
-              </span>
             </div>
           )}
-        </div>
+        </section>
 
-        {/* RIGHT: FILTERS */}
-        <aside className="w-[280px] shrink-0">
-          <div className="border rounded-lg p-4">
-            <div className="flex items-center justify-between mb-3">
-              <p className="font-semibold">Search by genre</p>
+        <aside className="pt-2">
+          <h2 className="text-5xl font-semibold leading-tight">Search by genre</h2>
+          <p className="mt-2 text-lg text-zinc-600">See lists of movies by genre</p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            {genres.map((genre) => (
               <button
-                onClick={clearFilters}
-                className="text-sm underline text-gray-600"
+                key={genre.id}
+                onClick={() => handleGenreClick(genre.id)}
+                className="inline-flex items-center gap-2 rounded-full border border-zinc-300 bg-zinc-50 px-3 py-1 text-sm font-medium transition-colors hover:bg-zinc-100"
               >
-                Clear
+                {genre.name}
+                <ArrowIcon className="h-3 w-3" />
               </button>
-            </div>
-
-            <div className="flex flex-wrap gap-2">
-              {genres.map((g) => {
-                const active = selectedGenreIds.includes(g.id);
-                return (
-                  <button
-                    key={g.id}
-                    onClick={() => toggleGenre(g.id)}
-                    className={`text-xs px-2 py-1 rounded-full border ${
-                      active ? "bg-black text-white" : "bg-white"
-                    }`}
-                  >
-                    {g.name}
-                  </button>
-                );
-              })}
-
-              {genres.length === 0 && (
-                <p className="text-xs text-gray-500">Genres unavailable</p>
-              )}
-            </div>
-
-            <hr className="my-4" />
-
-            <p className="font-semibold mb-2">Year</p>
-            <div className="flex gap-2">
-              <input
-                value={yearFrom}
-                onChange={(e) => setYearFrom(e.target.value)}
-                placeholder="From"
-                inputMode="numeric"
-                className="w-1/2 border rounded px-2 py-1 text-sm"
-              />
-              <input
-                value={yearTo}
-                onChange={(e) => setYearTo(e.target.value)}
-                placeholder="To"
-                inputMode="numeric"
-                className="w-1/2 border rounded px-2 py-1 text-sm"
-              />
-            </div>
-
-            <hr className="my-4" />
-
-            <p className="font-semibold mb-2">Rating</p>
-            <input
-              value={minRating}
-              onChange={(e) => setMinRating(e.target.value)}
-              placeholder="Min (e.g. 7)"
-              inputMode="decimal"
-              className="w-full border rounded px-2 py-1 text-sm"
-            />
-
-            <p className="text-xs text-gray-500 mt-3">
-              * Filters apply to current page results.
-            </p>
+            ))}
           </div>
         </aside>
       </div>

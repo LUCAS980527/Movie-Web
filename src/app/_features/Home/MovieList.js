@@ -2,9 +2,8 @@
 
 import ArrowIcon from "@/_Icons/ArrowIcon";
 import { MovieCards } from "../../_components/Movie-Cards";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useParams } from "next/navigation";
 const BASE_URL = "https://api.themoviedb.org/3";
 
 const ACCESS_TOKEN =
@@ -21,7 +20,7 @@ export const MovieList = (props) => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const getUpcomingMovieData = async () => {
+  const getUpcomingMovieData = useCallback(async () => {
     setLoading(true);
     const upcomingMovieEndpoint = `${BASE_URL}/movie/${type}?language=en-US&page=${page}`;
     const response = await fetch(upcomingMovieEndpoint, {
@@ -34,18 +33,14 @@ export const MovieList = (props) => {
     const data = await response.json();
     setMovieData(data.results);
     setLoading(false);
-  };
+  }, [page, type]);
   useEffect(() => {
     getUpcomingMovieData();
-  }, []);
+  }, [getUpcomingMovieData]);
 
   const handleSeeMoreButton = () => {
     router.push(`/movies/${type}`);
-    const handleChangePage = () => {
-      setPage();
-    };
   };
-  console.log("MovieData", MovieData);
 
   return (
     <div className="flex items-center justify-center w-[1437px] h-[978px] flex-col mt-[53px] gap-[32px]">

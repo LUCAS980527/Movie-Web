@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import OneStarIcon from "@/_Icons/OneStarIcon";
+import ArrowIcon from "@/_Icons/ArrowIcon";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -82,98 +83,114 @@ export default function MovieDetailPage() {
   const stars = credits?.cast?.slice(0, 3);
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-8">
-      <div className="grid md:grid-cols-2 gap-6 items-start">
-        <Image
-          src={`https://image.tmdb.org/t/p/w300${movie.poster_path}`}
-          alt={movie.title || "Movie poster"}
-          width={550}
-          height={350}
-          className="rounded-lg"
-        />
-
+    <div className="mx-auto w-full max-w-[1150px] px-6 py-10">
+      <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-4xl font-bold">{movie.title}</h1>
-
-          <p className="text-gray-500 mt-1">
+          <h1 className="text-4xl font-bold tracking-tight">{movie.title}</h1>
+          <p className="mt-1 text-sm text-zinc-600">
             {movie.release_date} • PG • {movie.runtime}m
           </p>
-
-          <div className="flex flex-wrap gap-2 mt-3">
-            {movie.genres.map((g) => (
-              <span
-                key={g.id}
-                className="px-3 py-1 text-sm rounded-full bg-gray-200"
-              >
-                {g.name}
-              </span>
-            ))}
-          </div>
-
-          <div className="flex items-center gap-2 mt-4">
+        </div>
+        <div className="text-right">
+          <p className="text-xs text-zinc-500">Rating</p>
+          <div className="mt-1 flex items-center gap-1">
             <OneStarIcon />
-            <span className="font-semibold">
-              {movie.vote_average.toFixed(1)}/10
-            </span>
-            <span className="text-sm text-gray-500">
-              ({movie.vote_count} votes)
-            </span>
+            <p className="font-semibold">{movie.vote_average.toFixed(1)}/10</p>
           </div>
+          <p className="text-xs text-zinc-500">{movie.vote_count} votes</p>
+        </div>
+      </div>
 
+      <div className="mt-4 grid gap-4 md:grid-cols-[230px_1fr]">
+        <div className="overflow-hidden rounded-md bg-zinc-100">
+          <Image
+            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+            alt={movie.title || "Movie poster"}
+            width={230}
+            height={500}
+            className="h-[500px] w-[230px] object-cover"
+          />
+        </div>
+
+        <div className="relative overflow-hidden rounded-md border-4 border-blue-500 bg-zinc-100">
+          <Image
+            src={
+              movie.backdrop_path
+                ? `https://image.tmdb.org/t/p/w1280${movie.backdrop_path}`
+                : `https://image.tmdb.org/t/p/w1280${movie.poster_path}`
+            }
+            alt={movie.title || "Backdrop"}
+            width={900}
+            height={500}
+            className="h-[500px] w-full object-cover"
+          />
           {trailer && (
             <button
               onClick={() => setShowTrailer(true)}
-              className="mt-4 px-4 py-2 bg-black text-white rounded-lg cursor-pointer"
+              className="absolute bottom-4 left-4 rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-zinc-800"
             >
-              ▶ Play trailer
+              Watch trailer
             </button>
           )}
         </div>
       </div>
 
-      <p className="mt-6 text-gray-700">{movie.overview}</p>
+      <div className="mt-4 flex flex-wrap gap-2">
+        {movie.genres.map((g) => (
+          <span
+            key={g.id}
+            className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium"
+          >
+            {g.name}
+          </span>
+        ))}
+      </div>
 
-      <div className="mt-6 space-y-2 text-sm">
+      <p className="mt-4 text-sm leading-6 text-zinc-700">{movie.overview}</p>
+
+      <div className="mt-4 space-y-0 text-sm">
         {director && (
-          <p>
-            <span className="font-semibold">Director:</span> {director.name}
+          <p className="border-b border-zinc-200 py-3">
+            <span className="w-[90px] inline-block font-semibold">Director</span>
+            <span>{director.name}</span>
           </p>
         )}
 
         {writers?.length > 0 && (
-          <p>
-            <span className="font-semibold">Writers:</span>{" "}
-            {writers.map((w) => w.name).join(" • ")}
+          <p className="border-b border-zinc-200 py-3">
+            <span className="w-[90px] inline-block font-semibold">Writers</span>
+            <span>{writers.map((w) => w.name).join(" • ")}</span>
           </p>
         )}
 
         {stars?.length > 0 && (
-          <p>
-            <span className="font-semibold">Stars:</span>{" "}
-            {stars.map((s) => s.name).join(" • ")}
+          <p className="border-b border-zinc-200 py-3">
+            <span className="w-[90px] inline-block font-semibold">Stars</span>
+            <span>{stars.map((s) => s.name).join(" • ")}</span>
           </p>
         )}
       </div>
 
       {similar.length > 0 && (
-        <div className="mt-10">
+        <div className="mt-8">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold">More like this</h2>
 
             <button
               onClick={() => setShowAllSimilar(!showAllSimilar)}
-              className="text-sm font-medium text-blue-600 hover:underline cursor-pointer"
+              className="flex items-center gap-1 text-sm font-medium cursor-pointer"
             >
-              {showAllSimilar ? "See less ↑" : "See more →"}
+              {showAllSimilar ? "See less" : "See more"}
+              <ArrowIcon />
             </button>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
             {similar.slice(0, showAllSimilar ? 20 : 5).map((m) => (
               <Link
                 key={m.id}
-                href={`/movie/${m.id}`} // ✅ ЯГ ЗӨВ ROUTE
-                className="space-y-2 block hover:opacity-90 cursor-pointer"
+                href={`/movie/${m.id}`}
+                className="block overflow-hidden rounded-md bg-zinc-100 hover:opacity-90"
               >
                 <Image
                   src={
@@ -182,16 +199,20 @@ export default function MovieDetailPage() {
                       : "/placeholder.png"
                   }
                   alt={m.title || "Movie poster"}
-                  width={300}
-                  height={450}
-                  className="rounded-lg"
+                  width={230}
+                  height={340}
+                  className="h-[320px] w-full object-cover"
                 />
 
-                <h3 className="text-sm font-semibold">{m.title}</h3>
-
-                <div className="flex items-center gap-1 text-xs">
-                  <OneStarIcon />
-                  {m.vote_average?.toFixed(1)}
+                <div className="px-2 py-2">
+                  <div className="flex items-center gap-1 text-xs">
+                    <OneStarIcon />
+                    <span>{m.vote_average?.toFixed(1)}</span>
+                    <span className="text-zinc-500">/10</span>
+                  </div>
+                  <h3 className="mt-1 line-clamp-2 text-sm font-medium">
+                    {m.title}
+                  </h3>
                 </div>
               </Link>
             ))}
